@@ -1,6 +1,7 @@
 package io.com.resume.user;
 
 import io.com.resume.country.Country;
+import io.com.resume.course.Course;
 import io.com.resume.education.Education;
 import io.com.resume.experience.Experience;
 import io.com.resume.languages.user_language.UserLanguage;
@@ -31,6 +32,9 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Education> education;
+
+    @OneToMany(mappedBy = "user")
+    private List<Course> courses;
 
     @OneToMany(mappedBy = "user")
     private List<Experience> experiences;
@@ -130,6 +134,14 @@ public class User {
         this.links = links;
     }
 
+    public List<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(List<Course> courses) {
+        this.courses = courses;
+    }
+
     public List<Education> getEducation() {
         return education;
     }
@@ -162,16 +174,17 @@ public class User {
         this.languages = languages;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(summary, user.summary) && Objects.equals(email, user.email) && Objects.equals(telephone, user.telephone) && Objects.equals(website, user.website) && Objects.equals(instantMessaging, user.instantMessaging) && Objects.equals(birthDate, user.birthDate) && Objects.equals(links, user.links) && Objects.equals(education, user.education) && Objects.equals(experiences, user.experiences) && Objects.equals(country, user.country);
+        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(summary, user.summary) && Objects.equals(email, user.email) && Objects.equals(telephone, user.telephone) && Objects.equals(website, user.website) && Objects.equals(instantMessaging, user.instantMessaging) && Objects.equals(birthDate, user.birthDate) && Objects.equals(links, user.links) && Objects.equals(education, user.education) && Objects.equals(courses, user.courses) && Objects.equals(experiences, user.experiences) && Objects.equals(country, user.country) && Objects.equals(languages, user.languages);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, summary, email, telephone, website, instantMessaging, birthDate, links, education, experiences, country);
+        return Objects.hash(id, name, summary, email, telephone, website, instantMessaging, birthDate, links, education, courses, experiences, country, languages);
     }
 }

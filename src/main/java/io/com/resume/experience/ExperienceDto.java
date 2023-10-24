@@ -1,6 +1,5 @@
 package io.com.resume.experience;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.com.resume.country.CountryDto;
 import io.com.resume.languages.language.LanguageDto;
@@ -22,5 +21,5 @@ public record ExperienceDto(
         CountryDto country,
         List<SkillDto> skills,
         LanguageDto language,
-        @JsonIgnore UserDto user) {
+        UserDto user) {
 }

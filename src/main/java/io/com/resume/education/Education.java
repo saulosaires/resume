@@ -17,8 +17,8 @@ public class Education {
     private String degree;
     private String city;
     private String description;
-    LocalDate startDate;
-    LocalDate endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

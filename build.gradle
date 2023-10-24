@@ -31,6 +31,9 @@ dependencies {
     implementation 'org.docx4j:docx4j-core:11.4.9'
     implementation 'org.docx4j:docx4j-JAXB-ReferenceImpl:11.4.9'
     implementation "org.docx4j:docx4j-JAXB-MOXy:11.4.9"
+// https://mvnrepository.com/artifact/org.docx4j/docx4j-ImportXHTML
+    implementation 'org.docx4j:docx4j-ImportXHTML:11.4.8'
+
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
