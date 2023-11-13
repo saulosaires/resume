@@ -1,10 +1,13 @@
 package io.com.resume.country;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@Slf4j
 public class CountryService {
 
     private final CountryRepository repository;
@@ -13,9 +16,9 @@ public class CountryService {
         this.repository = repository;
     }
 
-    public Country findById(Long id) {
-        Country country = repository.findById(id).orElse(null);
-
+    public Optional<Country> findById(Long id) {
+        Optional<Country> country = repository.findById(id);
+        log.info("CountryService.findById {}  present{}", id, country.isPresent());
         return country;
     }
 

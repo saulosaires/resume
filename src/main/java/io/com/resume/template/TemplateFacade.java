@@ -6,6 +6,7 @@ import io.com.resume.profile.ProfileDto;
 import io.com.resume.profile.ProfileFacade;
 import io.com.resume.skill.dto.SkillDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.docx4j.convert.in.xhtml.XHTMLImporterImpl;
 import org.docx4j.model.table.TblFactory;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
@@ -38,12 +39,16 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TemplateFacade {
     DateTimeFormatter pattern = DateTimeFormatter.ofPattern("MMM/yyyy");
 
     private final ProfileFacade profileFacade;
     private final ObjectFactory factory;
     int writableWidthTwips;
+    private static final int FONT_SIZE = 11;
+    private static final int CONTACTS_FONT_SIZE = 9;
+    private static final int TITLE_FONT_SIZE = 18;
     WordprocessingMLPackage wordPackage;
 
     public void getXML() {
@@ -68,6 +73,7 @@ public class TemplateFacade {
             wordPackage = WordprocessingMLPackage.createPackage();
             MainDocumentPart mainDocumentPart = wordPackage.getMainDocumentPart();
 
+
             writableWidthTwips = wordPackage.getDocumentModel()
                     .getSections().get(0).getPageDimensions().getWritableWidthTwips();
 
@@ -81,11 +87,8 @@ public class TemplateFacade {
             File exportFile = new File("welcome.docx");
             wordPackage.save(exportFile);
 
-            //System.out.println(XmlUtils.marshaltoString(mainDocumentPart.getXML()));
-            System.out.println(mainDocumentPart.getXML());
-
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("TemplateFacade.getTemplate error:{}", e.getMessage());
         }
 
     }
@@ -97,15 +100,15 @@ public class TemplateFacade {
 
     private void addSummary(MainDocumentPart mainDocumentPart, ProfileDto profile) {
 
-        mainDocumentPart.getContent().add(createParagraphOfText("summary", 18, false, true, false, true, JcEnumeration.LEFT));
+        mainDocumentPart.getContent().add(createParagraphOfText("summary", TITLE_FONT_SIZE, false, true, false, true, JcEnumeration.LEFT));
 
-        P summary = createParagraphOfText(profile.summary(), 11, true, false, false, false, JcEnumeration.BOTH);
+        P summary = createParagraphOfText(profile.summary(), FONT_SIZE, true, false, false, false, JcEnumeration.BOTH);
 
         mainDocumentPart.getContent().add(summary);
     }
 
     private void addEducation(MainDocumentPart mainDocumentPart, ProfileDto profile) {
-        mainDocumentPart.getContent().add(createParagraphOfText("education", 18, false, true, false, true, JcEnumeration.LEFT));
+        mainDocumentPart.getContent().add(createParagraphOfText("education", TITLE_FONT_SIZE, false, true, false, true, JcEnumeration.LEFT));
 
 
         for (EducationDto educationDto : profile.education()) {
@@ -113,11 +116,11 @@ public class TemplateFacade {
 
             String period = ", " + pattern.format(educationDto.startDate()) + " - " + pattern.format(educationDto.endDate());
 
-            R r_degree = getRun(educationDto.degree(), 11, true, false, false);
-            R r_at = getRun(" at ", 11, false, false, false);
-            R r_school = getRun(educationDto.school(), 11, false, false, false);
-            R r_city = getRun(", " + educationDto.city(), 11, false, false, false);
-            R r_period = getRun(period, 11, false, false, false);
+            R r_degree = getRun(educationDto.degree(), FONT_SIZE, true, false, false);
+            R r_at = getRun(" at ", FONT_SIZE, false, false, false);
+            R r_school = getRun(educationDto.school(), FONT_SIZE, false, false, false);
+            R r_city = getRun(", " + educationDto.city(), FONT_SIZE, false, false, false);
+            R r_period = getRun(period, FONT_SIZE, false, false, false);
 
             p.getContent().add(r_degree);
             p.getContent().add(r_at);
@@ -133,7 +136,7 @@ public class TemplateFacade {
 
     private void addProfessionalExperience(MainDocumentPart mainDocumentPart, ProfileDto profile) {
 
-        mainDocumentPart.getContent().add(createParagraphOfText("Professional Experience", 18, false, true, false, true, JcEnumeration.LEFT));
+        mainDocumentPart.getContent().add(createParagraphOfText("Professional Experience", TITLE_FONT_SIZE, false, true, false, true, JcEnumeration.LEFT));
 
         for (ExperienceDto experienceDto : profile.experiences()) {
 
@@ -141,13 +144,13 @@ public class TemplateFacade {
 
             mainDocumentPart.getContent().add(companyName);
 
-            var desc = getProfessionalExperienceDescription2(experienceDto);
+            var description = getProfessionalExperienceDescription2(experienceDto);
 
-            mainDocumentPart.getContent().addAll(desc);
+            mainDocumentPart.getContent().addAll(description);
             addBr(mainDocumentPart);
             P p_skill = getP(JcEnumeration.LEFT);
-            R r_skill = getRun("Skills: ", 11, true, false, false);
-            R r_skill_desc = getRun(getSkillStr(experienceDto.skills()), 11, false, false, false);
+            R r_skill = getRun("Skills: ", FONT_SIZE, true, false, false);
+            R r_skill_desc = getRun(getSkillStr(experienceDto.skills()), FONT_SIZE, false, false, false);
 
             p_skill.getContent().add(r_skill);
             p_skill.getContent().add(r_skill_desc);
@@ -166,16 +169,16 @@ public class TemplateFacade {
 
         P p = getP(JcEnumeration.LEFT);
 
-        R r_company = getRun(experienceDto.companyName(), 12, true, false, false);
-        R r_country = getRun(" - " + experienceDto.country().iso(), 11, false, false, false);
+        R r_company = getRun(experienceDto.companyName(), FONT_SIZE, true, false, false);
+        R r_country = getRun(" - " + experienceDto.country().iso(), FONT_SIZE, false, false, false);
 
         p.getContent().add(tabs);
         p.getContent().add(r_company);
         p.getContent().add(r_country);
         p.getContent().add(factory.createBr());
 
-        R r_title = getRun(experienceDto.title(), 11, true, false, false);
-        R r_period = getRun(" (" + pattern.format(experienceDto.startDate()) + " - " + pattern.format(experienceDto.endDate()) + ")", 11, false, false, false);
+        R r_title = getRun(experienceDto.title(), FONT_SIZE, true, false, false);
+        R r_period = getRun(" (" + pattern.format(experienceDto.startDate()) + " - " + pattern.format(experienceDto.endDate()) + ")", FONT_SIZE, false, false, false);
 
         p.getContent().add(tabs);
         p.getContent().add(r_title);
@@ -191,7 +194,6 @@ public class TemplateFacade {
                     experienceDto.description() + "</tbody></span>";
 
             XHTMLImporterImpl XHTMLImporter = new XHTMLImporterImpl(wordPackage);
-            //XHTMLImporter.setDivHandler(new DivToSdt());
 
             return XHTMLImporter.convert(htmlComment, null);
         } catch (Exception e) {
@@ -201,9 +203,7 @@ public class TemplateFacade {
     }
 
     private String getSkillStr(List<SkillDto> skills) {
-
-        return skills.stream().map(SkillDto::name).collect(Collectors.joining(","));
-
+        return skills.stream().map(SkillDto::name).sorted().collect(Collectors.joining(", "));
     }
 
     private P getP(JcEnumeration justification) {
@@ -237,7 +237,6 @@ public class TemplateFacade {
 
     private void addBr(MainDocumentPart mainDocumentPart) {
         mainDocumentPart.getContent().add(factory.createBr());
-        mainDocumentPart.getContent().add(factory.createBr());
     }
 
     private P getHeaderName(ProfileDto profile) {
@@ -263,10 +262,10 @@ public class TemplateFacade {
 
         Tbl tbl = TblFactory.createTable(2, 2, (writableWidthTwips - 500) / 2);
 
-        P p1 = createParagraphOfText(email, 9, false, false, false, false, JcEnumeration.LEFT);
-        P p2 = createHyperLink(website, 9, JcEnumeration.RIGHT);
-        P p3 = createParagraphOfText(telephone, 9, false, false, false, false, JcEnumeration.LEFT);
-        P p4 = createParagraphOfText(instantMessaging, 9, false, false, false, false, JcEnumeration.RIGHT);
+        P p1 = createParagraphOfText(email, CONTACTS_FONT_SIZE, false, false, false, false, JcEnumeration.LEFT);
+        P p2 = createHyperLink(website, JcEnumeration.RIGHT);
+        P p3 = createParagraphOfText(telephone, CONTACTS_FONT_SIZE, false, false, false, false, JcEnumeration.LEFT);
+        P p4 = createParagraphOfText(instantMessaging, CONTACTS_FONT_SIZE, false, false, false, false, JcEnumeration.RIGHT);
 
 
         ((Tc) ((Tr) tbl.getContent().get(0)).getContent().get(0)).getContent().add(p1);
@@ -294,7 +293,7 @@ public class TemplateFacade {
         return tbl;
     }
 
-    private P createHyperLink(String text, int fontSize, JcEnumeration justification) {
+    private P createHyperLink(String text, JcEnumeration justification) {
         P p = factory.createP();
         R r = factory.createR();
         P.Hyperlink hyperlink = factory.createPHyperlink();
@@ -307,7 +306,7 @@ public class TemplateFacade {
         p.getContent().add(hyperlink);
 
         RPr rpr = factory.createRPr();
-        setFontSize(rpr, fontSize);
+        setFontSize(rpr, CONTACTS_FONT_SIZE);
         RStyle rStyle = new RStyle();
         rStyle.setVal("Hyperlink");
         rpr.setRStyle(rStyle);

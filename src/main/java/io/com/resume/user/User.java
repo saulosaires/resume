@@ -6,7 +6,13 @@ import io.com.resume.education.Education;
 import io.com.resume.experience.Experience;
 import io.com.resume.languages.user_language.UserLanguage;
 import io.com.resume.link.Link;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -26,7 +32,7 @@ public class User {
     private String website;
     private String instantMessaging;
     private LocalDate birthDate;
-
+    private String photoUrl;
     @OneToMany(mappedBy = "user")
     private List<Link> links;
 
@@ -49,10 +55,11 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String name, String summary, String email, String telephone, String website, String instantMessaging,
+    public User(Long id, String name, String photoUrl, String summary, String email, String telephone, String website, String instantMessaging,
                 LocalDate birthDate, Country country) {
         this.id = id;
         this.name = name;
+        this.photoUrl = photoUrl;
         this.summary = summary;
         this.email = email;
         this.telephone = telephone;
@@ -174,6 +181,13 @@ public class User {
         this.languages = languages;
     }
 
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
 
     @Override
     public boolean equals(Object o) {

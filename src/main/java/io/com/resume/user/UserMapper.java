@@ -7,4 +7,6 @@ import org.mapstruct.ReportingPolicy;
 public interface UserMapper {
 
     UserDto toDto(User user);
+
+    User fromDto(UserDto user);
 }

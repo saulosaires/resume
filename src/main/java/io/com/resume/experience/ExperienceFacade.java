@@ -41,7 +41,7 @@ public class ExperienceFacade {
 
         experience.setSkills(parseSkill(experienceDto.skills()));
         experience.setUser(userService.findById(experienceDto.user().id()));
-        experience.setCountry(countryService.findById(experienceDto.country().id()));
+        experience.setCountry(countryService.findById(experienceDto.country().id()).orElse(null));
         experience.setLanguage(languageService.findById(experienceDto.language().id()));
 
         Experience experienceCreated = service.create(experience);

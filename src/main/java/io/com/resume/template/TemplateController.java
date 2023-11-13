@@ -18,4 +18,8 @@ public class TemplateController {
         templateFacade.getTemplate();
     }
 
+    @GetMapping("xml")
+    public void getXml() {
+        templateFacade.getXML();
+    }
 }

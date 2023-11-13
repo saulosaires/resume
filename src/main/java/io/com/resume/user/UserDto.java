@@ -12,5 +12,6 @@ public record UserDto(Long id,
                       String website,
                       String instantMessaging,
                       LocalDate birthDate,
+                      String photoUrl,
                       CountryDto country) {
 }
