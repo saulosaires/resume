@@ -8,6 +8,7 @@ import io.com.resume.skill.SkillService;
 import io.com.resume.skill.dto.SkillDto;
 import io.com.resume.user.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ExperienceFacade {
 
     private final SkillService skillService;
@@ -31,8 +33,9 @@ public class ExperienceFacade {
         return mapper.toDto(service.findById(id));
     }
 
-    public List<ExperienceDto> findByUserId(Long id) {
-        return service.findByUserId(id).stream().map(mapper::toDto).toList();
+    public List<ExperienceDto> findByUserId(Long userId) {
+        log.info("ExperienceFacade.findByUserId: {}", userId);
+        return service.findByUserId(userId).stream().map(mapper::toDto).toList();
     }
 
     public ExperienceDto create(ExperienceDto experienceDto) {
